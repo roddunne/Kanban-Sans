@@ -1,0 +1,11 @@
+.column { height: 100%; width: 24%; float: left; border-left: 3px solid black; }
+.column:first-child { border-left: 0px; }
+h1.column-header { text-align: center; }
+ul { list-style-type: none; margin: 0; padding: 0; height: 100%;}
+li { margin: 5px; padding: 5px; background-color: yellow; cursor: move; }
+.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 86%; }
+#trash { height: 2.5em; width: 100%; border: 1px gray dashed; color: gray; margin-bottom: 5px; }
+#dialog-form form { padding: 0px; margin: 0px; }
+#new-task-text { height: 90%; width: 100%; }
+#dialog-form label { display: block; }
+

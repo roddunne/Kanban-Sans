@@ -1,0 +1,7 @@
+h1= title
+#container
+    - each column in columns
+      div.column
+        ul
+          - each stickyNote in column.stickyNotes
+            li.body= stickyNote.text

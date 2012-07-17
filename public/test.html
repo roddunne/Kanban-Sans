@@ -1,0 +1,230 @@
+<html>
+<head>
+</head>
+<body>
+<link type="text/css" href="css/smoothness/jquery-ui-1.8.21.custom.css" rel="Stylesheet" />
+<script src="js/jquery-1.7.2.min.js" language="JavaScript"></script>
+<script src="js/jquery-ui-1.8.21.custom.min.js" language="JavaScript"></script>
+<style>
+.column { height: 100%; width: 24%; float: left; border-left: 3px solid black; }
+.column:first-child { border-left: 0px; }
+h1.column-header { text-align: center; }
+ul { list-style-type: none; margin: 0; padding: 0; height: 100%;}
+li { margin: 5px; padding: 5px; background-color: yellow; cursor: move; }
+
+.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 86%; }
+/*
+#trash li { display: none; }
+#trash { height: 100px; width: 100%; border: 1px gray dashed; color: gray; }
+.clearer { float: clear; }
+#trash-hover { border: 1px red dashed; }
+li.trashed { display: none; }
+*/
+#trash { height: 100px; border: 1px gray dashed; }
+#dialog-form form { padding: 0px; margin: 0px; }
+#new-task-text { height: 90%; width: 100%; }
+label { display: block; }
+.ui-widget { font-size: 0.9em; }
+</style>
+<script>
+<!--
+$(document).ready(function(){
+    var internalSort = false;
+    
+    $( ".sortable" ).sortable({
+        revert : true,
+        connectWith: ".sortable, #trash",
+        containment: "window",
+        receive: function(event, ui) {
+            var updatedState = {
+                taskId : ui.item.prop("id"),
+                column : $(this).parents(".column").prop("id"),
+                index : ui.item.index()
+            };
+            
+            $.ajax({
+              type: 'POST',
+              url: '/save',
+              data: updatedState,
+//            success: success,
+              dataType: 'json'
+             });
+        },
+        update: function(event, ui) {
+            internalSort = !ui.sender;
+        },
+        stop: function(event, ui) {
+            if(internalSort) {
+                internalSort = false;
+            }
+        }
+        
+    });
+    $( "ul, li" ).disableSelection();
+    
+    $( "#dialog-form" ).dialog({
+        autoOpen: false,
+        height: 300,
+        width: 350,
+        modal: true,
+        buttons: {
+            "Add task": function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/new',
+                    data: { taskText: $( "#new-task-text" ).val() },
+                    dataType: 'json',
+                    success: function(data) {
+                        $( "#backlog ul" ).append(
+                            '<li id="sticky-'+data._id+'">'+data.text+'</li>');
+                        $( "#dialog-form" ).dialog( "close" );
+                    }
+                });
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        },
+        close: function() {
+            $( "#new-task-text" ).val("");
+        }
+    });
+    
+    $( "#create-task" )
+        .button()
+        .click(function() {
+            $( "#dialog-form" ).dialog( "open" );
+        });
+
+    $( "#trash" ).droppable({
+        accept: ".sortable li",
+        drop: function(event, ui) {
+            var updatedState = {
+                taskId : ui.draggable.prop("id"),
+                column : 'trash',
+                index : 0
+            };
+            
+            $.ajax({
+              type: 'POST',
+              url: '/save',
+              data: updatedState,
+              success: function() {
+                ui.draggable.remove();
+              },
+              dataType: 'json',
+              error: function() {
+                alert( "Error: Changes could not be saved!" );
+                }
+             });
+ 
+
+//            ui.draggable.remove();
+        }
+    });
+
+    $( "#trash-label" ).click(function() {
+        var trashData = [{
+            text : 'A trashed item',
+            deletedFrom : 'done',
+            deletedOn : new Date(),
+            id : 123482
+        }];
+        
+        for( var i=0; i<trashData.length; i++ ) {
+            var trashItem = trashData[i];
+
+            $( "#trash-table tbody" ).append(
+                $('<tr>' +
+                    '<td>' + trashItem.text + '</td>' + 
+                    '<td>' + trashItem.deletedFrom + '</td>' +
+                    '<td>' + trashItem.deletedOn + '</td>' +
+                '</tr>').append( 
+                    $("<td></td>").append(
+                        $( "<button>Restore</button>" ).click(function() {
+                            alert( "You want to restore Task #"+trashItem.id );
+                            $(this).parents( "tr" ).remove();
+                            $( "#"+trashItem.deletedFrom+" ul" ).append(
+                                '<li id="'+trashItem.id+'">'+trashItem.text+'</li>');
+
+                        })
+                    )
+                )
+            );
+        }
+        $( "#dialog-trash" ).dialog( "open" );
+    });
+
+    $( "#dialog-trash" ).dialog({
+        autoOpen: false,
+        height: 300,
+        width: 350,
+        modal: true,
+        buttons: {
+            "Done" : function() {
+                $( this ).dialog( "close" );
+            }
+        },
+        close: function() {
+            $( "#trash-table tbody" ).empty();
+        }
+    });
+
+});
+// -->
+</script>
+<div id="container">
+    <div id="trash"><span id="trash-label">Trash</span></div>
+    <div id="backlog" class="column">
+        <h1 class="column-header">Backlog</h1>
+        <ul class="sortable">
+            <li>Implement Authentication</li>
+            <li>Implement Domain Model Persistence</li>
+        </ul>
+    </div>
+    <div id="ready" class="column">
+        <h1 class="column-header">Ready</h1>
+        <ul class="sortable">
+            <li id="task-2">Style the UI</li>
+        </ul>
+    </div>
+    <div id="doing" class="column">
+        <h1 class="column-header">Doing</h1>
+        <ul class="sortable">
+            <li>Implement Dummy UI</li>
+        </ul>
+    </div>
+    <div id="done" class="column">
+        <h1 class="column-header">Done</h1>
+        <ul class="sortable">
+            <li>Implement basic Node.js webserver</li>
+        </ul>
+    </div>
+    <button id="create-task">Create new task</button>
+</div>
+
+<div id="dialog-form" title="Create new task">
+    <form>
+<!--    <fieldset> -->
+        <label for="new-task-text">Text</label>
+        <textarea name="new-task-text" id="new-task-text"></textarea>
+<!--    </fieldset> -->
+    </form>
+</div>
+
+<div id="dialog-trash" title="Trash">
+    <table id="trash-table" class="ui-widget ui-widget-content">
+        <thead>
+            <tr class="ui-widget-header">
+                <th>Task Text</th>
+                <th>Deleted From</th>
+                <th>Deleted Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+</body>
+</html>

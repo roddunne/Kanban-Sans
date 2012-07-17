@@ -1,0 +1,43 @@
+{
+	_id: ObjectId(),
+	name: "KanbanBoard",
+	
+	columns: [
+		{
+			id: ObjectId(),
+			name: "Backlog",
+			sortOrder: 0,
+			tasks: [
+				{
+					id: ObjectId(),
+					text: ""
+				},
+				{
+					id: ObjectId(),
+					text: ""
+				}
+			]
+		},
+		{
+			id: ObjectId(),
+			name: "Ready",
+			sortOrder: 1,
+			tasks: [
+				{
+					id: ObjectId(),
+					text: ""
+				},
+				{
+					id: ObjectId(),
+					text: ""
+				}
+			]
+		}
+	]
+	
+	author : {
+		id: ObjectId(),
+		email: "",
+		passwordHash: ""
+	}
+}

@@ -1,0 +1,36 @@
+extends layout
+
+block append styles
+  link(rel='stylesheet', href='public/board.css')
+
+block append scripts
+  script(src='public/board-client.js')
+  script(src='public/trash-client.js')
+
+block content
+  #container
+    #trash
+      span#trash-label= 'Trash'
+    - each column in columns
+      div.column(id= column.id)
+          h1.column-header= column.name
+          ul.sortable
+             - each stickyNote in column.stickyNotes
+               li(id= stickyNote.id)= stickyNote.text
+    button#create-task= 'Create new task'
+
+  #dialog-form(title= 'Create new task')
+    form
+      label(for='new-task-text')= 'Text'
+      textarea#new-task-text(name= 'new-task-text')
+
+  #dialog-trash(title= 'Trash')
+    table#trash-table.ui-widget.ui-widget-content
+      thead
+        tr.ui-widget-header
+          th= 'Task Text'
+          th= 'Deleted From'
+          th= 'Deleted Date'
+          th= 'Action'
+      tbody
+

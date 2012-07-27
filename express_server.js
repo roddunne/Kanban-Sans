@@ -121,6 +121,52 @@ httpserver.post('/save', function(req, res) {
     });
 });
 
+httpserver.post('/edit', function(req, res) {
+    console.log("POST on /edit "+JSON.stringify(req.body));
+
+    var errorResponse = { result: 'error' };
+    var editData = req.body;
+
+    if( authenticationHelper.isAuthenticated(req.session) ) {
+        boardMapper.findByEmail( req.session.userDetails.user, function(error, board) {
+            if(error) {
+                errorResponse.message = error;
+                res.json( errorResponse );
+            }
+            else {
+                var kanbanBoard = new KanbanBoard(board);
+                console.log( JSON.stringify( kanbanBoard ));
+                
+                var task = kanbanBoard.findTask( editData['edit-task-id'] );
+                if( task ) {
+                    task.text = editData['new-task-text'];
+                    boardMapper.update( kanbanBoard.data, function(error, updatedBoard) {
+                        if(error) {
+                            errorResponse.message = error;
+                            res.json( errorResponse );
+                        }
+                        else {
+                            var updatedKanbanBoard = new KanbanBoard(board);
+                            res.json({
+                                result: 'success',
+                                task: updatedKanbanBoard.findTask( editData['edit-task-id'] )
+                            });
+                        }
+                    });
+                }                
+                else {
+                    errorResponse.message = 'Task not found';
+                    res.json( errorResponse );
+                }
+            }
+        });
+    }
+    else {
+        errorResponse.message = 'Session Required';
+        res.json( errorResponse );
+    }
+});
+
 httpserver.post('/new', function(req, res) {
     console.log("Got post "+res.statusCode);
     
@@ -346,4 +392,23 @@ httpserver.post('/signup', function(req, res) {
 });
 
 httpserver.listen(1337);
+
+KanbanBoard = function(jsonObj) {
+    console.log( "constructor called");
+    this.data = jsonObj;
+
+    this.tasks = {};
+    for( var c=0; c<jsonObj.columns.length; c++) {
+        var column = jsonObj.columns[c];
+        for( var t=0; t<column.stickyNotes.length; t++) {
+            var task = column.stickyNotes[t];
+            this.tasks[ task.id ] = task;
+            console.log( "tasks["+task.id+"] = "+this.tasks[task.id] );
+        }
+    }
+}
+KanbanBoard.prototype.findTask = function(taskId) {
+    console.log( taskId + " = " +JSON.stringify( this.tasks[ taskId ] ));
+    return this.tasks[ taskId ];
+}
 

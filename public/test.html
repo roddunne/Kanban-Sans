@@ -1,7 +1,5 @@
 <html>
 <head>
-</head>
-<body>
 <link type="text/css" href="css/smoothness/jquery-ui-1.8.21.custom.css" rel="Stylesheet" />
 <script src="js/jquery-1.7.2.min.js" language="JavaScript"></script>
 <script src="js/jquery-ui-1.8.21.custom.min.js" language="JavaScript"></script>
@@ -25,9 +23,30 @@ li.trashed { display: none; }
 #new-task-text { height: 90%; width: 100%; }
 label { display: block; }
 .ui-widget { font-size: 0.9em; }
+#dialog-trash table { border-collapse: collapse;  }
+#dialog-trash table td,
+#dialog-trash table th { border: 1px solid #EEE; padding: .6em 10px; text-align: left; }
 </style>
+<link type="text/css" href="board.css" rel="Stylesheet" />
 <script>
 <!--
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
 $(document).ready(function(){
     var internalSort = false;
     
@@ -88,6 +107,58 @@ $(document).ready(function(){
         close: function() {
             $( "#new-task-text" ).val("");
         }
+    });
+
+    $( ".sortable li" ).dblclick(function() {
+        $( "#dialog-form form" ).append( '<input type="hidden" name="edit-task-id"' +
+            ' id="edit-task-id" value="' + $(this).attr('id') + '"/>');
+        $( "#new-task-text" ).val( $(this).text() );
+
+        // save the old buttons
+        var oldButtons = $( "#dialog-form" ).dialog( "option", "buttons" );
+        var oldTitle = $( "#dialog-form" ).dialog( "option", "title");
+
+        // change the buttons to something a bit more 'edit' appropriate
+        $( "#dialog-form" ).dialog( "option", "buttons", [{
+            text: "Save",
+            click: function() {
+                 $.ajax({
+                    type: 'POST',
+                    url: '/edit',
+//                    data: $(this).find('form').serializeObject(),
+                    data: {
+                        'edit-task-id': $("#edit-task-id").val(),
+                        'new-task-text': $("#new-task-text").val()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        alert( JSON.stringify(data) );
+                        $( "li#"+data.task._id ).text( data.task.text );
+                        $( "#dialog-form" ).dialog( "close" );
+                    }
+                });
+            }},{
+            text: "Cancel",
+            click: function() {
+                $(this).dialog( "close" );
+            }
+        }]);
+
+        $( "#dialog-form" ).dialog("option", "title", "Edit Task");
+        
+        // regardless of how the dialog is closed restore it to a "Create Task"
+        // dialog
+        $( "#dialog-form" ).bind( "dialogclose", function(event, ui) {
+            $( "new-task-text" ).val("");
+            $( "#edit-task-id" ).remove();
+            $(this).dialog( "option", "title", oldTitle );
+            $(this).dialog( "option", "buttons", oldButtons );
+            $(this).bind( "dialogclose", function() {
+                $( "#new-task-text" ).val("");
+            });
+        });
+
+        $( "#dialog-form" ).dialog( "open" );
     });
     
     $( "#create-task" )
@@ -173,8 +244,14 @@ $(document).ready(function(){
 });
 // -->
 </script>
+</head>
+<body>
 <div id="container">
-    <div id="trash"><span id="trash-label">Trash</span></div>
+    <div id="board-header">
+        <div id="button-row"><button id="create-task">Create new task</button></div>
+        <div id="trash"><span id="trash-label">Trash</span></div>
+    </div>
+    <div id="columns">
     <div id="backlog" class="column">
         <h1 class="column-header">Backlog</h1>
         <ul class="sortable">
@@ -200,7 +277,10 @@ $(document).ready(function(){
             <li>Implement basic Node.js webserver</li>
         </ul>
     </div>
+    </div>
+    <!--
     <button id="create-task">Create new task</button>
+    -->
 </div>
 
 <div id="dialog-form" title="Create new task">

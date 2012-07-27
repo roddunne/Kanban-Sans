@@ -90,5 +90,61 @@ $(document).ready(function(){
             });
         }
     });
+
+     $( ".sortable li" ).dblclick(function() {
+        $( "#dialog-form form" ).append( '<input type="hidden" name="edit-task-id"' +
+            ' id="edit-task-id" value="' + $(this).attr('id') + '"/>');
+        $( "#new-task-text" ).val( $(this).text() );
+
+        var targetLi = $(this);
+
+        // save the old buttons
+        var oldButtons = $( "#dialog-form" ).dialog( "option", "buttons" );
+        var oldTitle = $( "#dialog-form" ).dialog( "option", "title");
+
+        // change the buttons to something a bit more 'edit' appropriate
+        $( "#dialog-form" ).dialog( "option", "buttons", [{
+            text: "Save",
+            click: function() {
+                 $.ajax({
+                    type: 'POST',
+                    url: '/edit',
+                    data: {
+                        'edit-task-id': $("#edit-task-id").val(),
+                        'new-task-text': $("#new-task-text").val()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+//                        alert( JSON.stringify(data) );
+//                        targetLi.css( "border", "2px solid red" );
+                        targetLi.text( data.task.text );
+//                        $( "#"+data.task.id ).text( data.task.text );
+                        $( "#dialog-form" ).dialog( "close" );
+                    }
+                });
+            }},{
+            text: "Cancel",
+            click: function() {
+                $(this).dialog( "close" );
+            }
+        }]);
+
+        $( "#dialog-form" ).dialog("option", "title", "Edit Task");
+        
+        // regardless of how the dialog is closed restore it to a "Create Task"
+        // dialog
+        $( "#dialog-form" ).bind( "dialogclose", function(event, ui) {
+            $( "new-task-text" ).val("");
+            $( "#edit-task-id" ).remove();
+            $(this).dialog( "option", "title", oldTitle );
+            $(this).dialog( "option", "buttons", oldButtons );
+            $(this).bind( "dialogclose", function() {
+                $( "#new-task-text" ).val("");
+            });
+        });
+
+        $( "#dialog-form" ).dialog( "open" );
+    });
+   
 });
 

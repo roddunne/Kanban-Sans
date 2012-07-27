@@ -1,0 +1,4 @@
+#dialog-trash table { border-collapse: collapse;  }
+#dialog-trash table td,
+#dialog-trash table th { border: 1px solid #EEE; padding: .6em 10px; text-align: left; }
+

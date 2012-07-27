@@ -1,3 +1,5 @@
+body { margin: 0px; }
+
 .column { height: 100%; width: 24%; float: left; border-left: 3px solid black; }
 .column:first-child { border-left: 0px; }
 h1.column-header { text-align: center; }
@@ -8,4 +10,9 @@ li { margin: 5px; padding: 5px; background-color: yellow; cursor: move; }
 #dialog-form form { padding: 0px; margin: 0px; }
 #new-task-text { height: 90%; width: 100%; }
 #dialog-form label { display: block; }
+
+#board-header { background-color: gray; padding: 5px; }
+#button-row { width: 49%; float: left; }
+#trash { width: 49%; float: right; color: lightgray; border: 1px lightgray dashed; }
+#board-header::after { display: block; content: ""; clear: both; }
 

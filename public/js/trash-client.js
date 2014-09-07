@@ -6,7 +6,7 @@ $(document).ready(function(){
             url: '/trash',
             dataType: 'json',
             success: function(data) {
-                var trashData = data.trashData; 
+                var trashData = data.trashData;
                 for( var i=0; i<trashData.length; i++ ) {
                     // make a closure so that the onclick function can have
                     // access to the loop data
@@ -15,10 +15,10 @@ $(document).ready(function(){
 
                         $( "#trash-table tbody" ).append(
                             $('<tr>' +
-                                '<td>' + trashItem.text + '</td>' + 
+                                '<td>' + trashItem.text + '</td>' +
                                 '<td>' + trashItem.deletedFrom + '</td>' +
                                 '<td>' + trashItem.deletedOn + '</td>' +
-                            '</tr>').append( 
+                            '</tr>').append(
                                 $("<td></td>").append(
                                     $( "<button>Restore</button>" ).click(function() {
                                         var tableRow = $(this).parents( "tr" );

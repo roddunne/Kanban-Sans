@@ -1,6 +1,6 @@
 $(document).ready(function(){
     var internalSort = false;
-	
+
     $( ".sortable" ).sortable({
         revert : true,
 		connectWith: ".sortable, #trash",
@@ -11,7 +11,7 @@ $(document).ready(function(){
 				column : $(this).parents(".column").prop("id"),
 				index : ui.item.index()
 			};
-			
+
 			$.ajax({
 			  type: 'POST',
 			  url: '/save',
@@ -28,10 +28,10 @@ $(document).ready(function(){
 				internalSort = false;
 			}
 		}
-		
+
     });
     $( "ul, li" ).disableSelection();
-	
+
 	$( "#dialog-form" ).dialog({
 		autoOpen: false,
 		height: 300,
@@ -61,13 +61,13 @@ $(document).ready(function(){
 			$( "#new-task-text" ).val("");
 		}
 	});
-	
+
 	$( "#create-task" )
 		.button()
 		.click(function() {
 			$( "#dialog-form" ).dialog( "open" );
 		});
-    
+
     $( "#trash" ).droppable({
         accept: ".sortable li",
         drop: function(event, ui) {
@@ -130,7 +130,7 @@ $(document).ready(function(){
         }]);
 
         $( "#dialog-form" ).dialog("option", "title", "Edit Task");
-        
+
         // regardless of how the dialog is closed restore it to a "Create Task"
         // dialog
         $( "#dialog-form" ).bind( "dialogclose", function(event, ui) {
@@ -145,6 +145,6 @@ $(document).ready(function(){
 
         $( "#dialog-form" ).dialog( "open" );
     });
-   
+
 });
 

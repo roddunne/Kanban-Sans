@@ -1,24 +1,28 @@
 extends layout
 
 block append styles
-  link(rel='stylesheet', href='public/board.css')
-  link(rel='stylesheet', href='public/trash.css')
+  link(rel='stylesheet', href='public/css/board.css')
+  link(rel='stylesheet', href='public/css/trash.css')
 
 block append scripts
-  script(src='public/board-client.js')
-  script(src='public/trash-client.js')
+  script(src='public/js/board-client.js')
+  script(src='public/js/trash-client.js')
 
 block content
   #container
-    #trash
-      span#trash-label= 'Trash'
-    - each column in columns
-      div.column(id= column.id)
-          h1.column-header= column.name
-          ul.sortable
-             - each stickyNote in column.stickyNotes
-               li(id= stickyNote.id)= stickyNote.text
-    button#create-task= 'Create new task'
+    #board-header
+      #button-row
+        button#create-task= 'Create new task'
+      #trash
+        span#trash-label= 'Trash'
+
+    #columns
+      - each column in columns
+        div.column(id= column.id)
+            h1.column-header= column.name
+            ul.sortable
+               - each stickyNote in column.stickyNotes
+                 li(id= stickyNote.id)= stickyNote.text
 
   #dialog-form(title= 'Create new task')
     form

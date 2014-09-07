@@ -33,10 +33,12 @@ UserMapper.prototype.findById = function(id, callback) {
     this.getCollection(function(error, user_collection) {
       if( error ) callback(error)
       else {
-        user_collection.findOne({_id: user_collection.db.bson_serializer.ObjectID.createFromHexString(id)}, function(error, result) {
-          if( error ) callback(error)
-          else callback(null, result)
-        });
+        user_collection.findOne(
+            { _id: user_collection.db.bson_serializer.ObjectID.createFromHexString(id) },
+            function(error, result) {
+                if( error ) callback(error)
+                else callback(null, result)
+            });
       }
     });
 };
@@ -45,7 +47,7 @@ UserMapper.prototype.findByEmail = function(email, callback) {
     this.getCollection(function(error, user_collection) {
       if( error ) callback(error)
       else {
-        user_collection.findOne({ "email": email}, function(error, result) {
+        user_collection.findOne({ "email": email }, function(error, result) {
           if( error ) callback(error)
           else callback(null, result)
         });

@@ -49,7 +49,7 @@ $.fn.serializeObject = function()
 
 $(document).ready(function(){
     var internalSort = false;
-    
+
     $( ".sortable" ).sortable({
         revert : true,
         connectWith: ".sortable, #trash",
@@ -60,7 +60,7 @@ $(document).ready(function(){
                 column : $(this).parents(".column").prop("id"),
                 index : ui.item.index()
             };
-            
+
             $.ajax({
               type: 'POST',
               url: '/save',
@@ -77,10 +77,10 @@ $(document).ready(function(){
                 internalSort = false;
             }
         }
-        
+
     });
     $( "ul, li" ).disableSelection();
-    
+
     $( "#dialog-form" ).dialog({
         autoOpen: false,
         height: 300,
@@ -145,7 +145,7 @@ $(document).ready(function(){
         }]);
 
         $( "#dialog-form" ).dialog("option", "title", "Edit Task");
-        
+
         // regardless of how the dialog is closed restore it to a "Create Task"
         // dialog
         $( "#dialog-form" ).bind( "dialogclose", function(event, ui) {
@@ -160,7 +160,7 @@ $(document).ready(function(){
 
         $( "#dialog-form" ).dialog( "open" );
     });
-    
+
     $( "#create-task" )
         .button()
         .click(function() {
@@ -175,7 +175,7 @@ $(document).ready(function(){
                 column : 'trash',
                 index : 0
             };
-            
+
             $.ajax({
               type: 'POST',
               url: '/save',
@@ -188,7 +188,7 @@ $(document).ready(function(){
                 alert( "Error: Changes could not be saved!" );
                 }
              });
- 
+
 
 //            ui.draggable.remove();
         }
@@ -201,16 +201,16 @@ $(document).ready(function(){
             deletedOn : new Date(),
             id : 123482
         }];
-        
+
         for( var i=0; i<trashData.length; i++ ) {
             var trashItem = trashData[i];
 
             $( "#trash-table tbody" ).append(
                 $('<tr>' +
-                    '<td>' + trashItem.text + '</td>' + 
+                    '<td>' + trashItem.text + '</td>' +
                     '<td>' + trashItem.deletedFrom + '</td>' +
                     '<td>' + trashItem.deletedOn + '</td>' +
-                '</tr>').append( 
+                '</tr>').append(
                     $("<td></td>").append(
                         $( "<button>Restore</button>" ).click(function() {
                             alert( "You want to restore Task #"+trashItem.id );

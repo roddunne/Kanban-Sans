@@ -1,7 +1,7 @@
 {
 	_id: ObjectId(),
 	name: "KanbanBoard",
-	
+
 	columns: [
 		{
 			id: ObjectId(),
@@ -34,7 +34,7 @@
 			]
 		}
 	]
-	
+
 	author : {
 		id: ObjectId(),
 		email: "",
